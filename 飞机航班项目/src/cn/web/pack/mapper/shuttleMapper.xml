@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="cn.web.pack.mapper.ShuttleMapper" >
+  	<cache readOnly="true" ></cache>
+  	<resultMap type="Shuttle" id="map01">
+  		<id column="shuttle_id" property="id" />
+  		<result column="time" property="time" />
+  		<result column="price" property="price" />
+  		<association property="plane" javaType="Plane" >
+  			<id column="pid" property="id" />
+  			<result column="pname" property="name" />
+  			<result column="ptype" property="type" />
+  		</association>
+  		<association property="startAir" javaType="Airport" >
+  			<id column="aid" property="id" />
+  			<result column="aname" property="name" />
+  			<result column="addressa" property="address" />
+  		</association>
+  		<association property="stopAir" javaType="Airport" >
+  			<id column="iid" property="id" />
+  			<result column="iname" property="name" />
+  			<result column="addressi" property="address" />
+  		</association>
+  	</resultMap>
+  	<select id="all" resultMap="map01" >
+  		select 
+			s.shuttle_id as id,
+			s.time as time,
+			s.price,
+			p.plane_id as pid,
+			p.plane_name as pname,
+			p.plane_type as ptype,
+			a.airport_id as aid,
+			a.airport_name as aname,
+			a.airport_address as addressa,
+			i.airport_id as iid,
+			i.airport_name as iname,
+			i.airport_address as addressi
+		from 
+			shuttle s
+			join plane p on s.plane_id=p.plane_id
+			join airport a on s.startairport_id=a.airport_id
+			join airport i on s.stopairport_id=i.airport_id
+  	</select>
+  	
+  	<select id="list" resultMap="map01" >
+  		select 
+			s.shuttle_id as id,
+			s.time as time,
+			s.price,
+			p.plane_id as pid,
+			p.plane_name as pname,
+			p.plane_type as ptype,
+			a.airport_id as aid,
+			a.airport_name as aname,
+			a.airport_address as addressa,
+			i.airport_id as iid,
+			i.airport_name as iname,
+			i.airport_address as addressi
+		from 
+			shuttle s
+			join plane p on s.plane_id=p.plane_id
+			join airport a on s.startairport_id=a.airport_id
+			join airport i on s.stopairport_id=i.airport_id
+			<where>
+				<if test="startaddress !=null and startaddress != '' ">
+					and a.airport_address=#{startaddress}
+				</if>
+				<if test="stopaddress !=null and stopaddress != '' ">
+					and i.airport_address=#{stopaddress}
+				</if>
+			</where>
+  	</select>
+  </mapper>
